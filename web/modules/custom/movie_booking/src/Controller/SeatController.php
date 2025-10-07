@@ -17,29 +17,40 @@ class SeatController extends ControllerBase {
   public function seatMapAjax(Node $node) {
     $markup = '';
 
-    if ($node->hasField('field_seats_map') && !$node->get('field_seats_map')->isEmpty()) {
-      $seat_map_json = $node->get('field_seats_map')->value;
-      $seat_map = json_decode($seat_map_json, TRUE);
+    if ($node->hasField('field_seat_map') && !$node->get('field_seat_map')->isEmpty()) {
+        $seat_map_json = $node->get('field_seat_map')->value;
+        $seat_map = json_decode($seat_map_json, TRUE);
 
-      $markup .= '<h5>' . $node->getTitle() . ' - Seat Map</h5>';
-      $markup .= '<div class="seat-map d-flex flex-column gap-2">';
-
-      foreach ($seat_map as $row) {
-        $markup .= '<div class="seat-row d-flex gap-2">';
-        foreach ($row as $seat) {
-          $status_class = ($seat['status'] === 'sold') ? 'btn-danger' : 'btn-success';
-          $markup .= '<button class="btn ' . $status_class . '" disabled>' . $seat['label'] . '</button>';
+        if (!is_array($seat_map)) {
+            return new JsonResponse(['markup' => '<p>Invalid seat map data.</p>']);
         }
-        $markup .= '</div>';
-      }
 
-      $markup .= '</div>';
+        $markup .= '<h5>' . htmlspecialchars($node->getTitle()) . ' - Seat Map</h5>';
+        $markup .= '<div class="seat-map d-flex flex-column gap-2">';
+
+        foreach ($seat_map as $row_label => $seats) {
+            if (!is_array($seats)) continue;
+
+            // Row container with flex display
+            $markup .= '<div class="seat-row d-flex gap-2 mb-2">';
+
+            foreach ($seats as $seat) {
+                if (!is_array($seat) || !isset($seat['label'], $seat['status'])) continue;
+ 
+                $status_class = $seat['status'] === 'sold' ? 'btn-danger' : 'btn-success';
+                $markup .= '<button class="btn ' . $status_class . ' btn-sm" disabled>' . htmlspecialchars($seat['label']) . '</button>';
+            }
+
+            $markup .= '</div>'; // end row
+        }
+
+        $markup .= '</div>'; // end seat map
     }
     else {
-      $markup = '<p>No seat map available for this movie.</p>';
+        $markup = '<p>No seat map available for this movie.</p>';
     }
 
     return new JsonResponse(['markup' => $markup]);
-  }
+}
 
 }

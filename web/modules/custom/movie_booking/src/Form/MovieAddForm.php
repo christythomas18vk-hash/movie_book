@@ -127,26 +127,36 @@ class MovieAddForm extends FormBase {
    * Helper function to generate seat map JSON based on total seats.
    */
   private function createSeatMapJSON($total) {
-    $rows = ceil($total / 10); // 10 seats per row
     $seat_map = [];
     $alphabet = range('A', 'Z');
     $seat_number = 1;
+    $seats_per_row = 8; // Fixed seats per row
 
-    for ($i = 0; $i < $rows; $i++) {
-      $row_letter = $alphabet[$i];
-      $row = [];
-      for ($j = 1; $j <= 10; $j++) {
-        if ($seat_number > $total) {
-          break;
+    $row_index = 0;
+
+    while ($seat_number <= $total) {
+        $row_letter = $alphabet[$row_index];
+        $row = [];
+
+        for ($j = 1; $j <= $seats_per_row; $j++) {
+            if ($seat_number > $total) {
+                break;
+            }
+            $row[] = [
+                'label' => $row_letter . $j,
+                'status' => 'available', // default status
+            ];
+            $seat_number++;
         }
-        $row[] = $row_letter . $j;
-        $seat_number++;
-      }
-      $seat_map[$row_letter] = $row;
+
+        $seat_map[$row_letter] = $row;
+        $row_index++;
     }
 
     return json_encode($seat_map, JSON_PRETTY_PRINT);
-  }
+}
+
+
 
   /**
    * {@inheritdoc}

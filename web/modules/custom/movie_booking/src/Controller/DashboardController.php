@@ -104,22 +104,33 @@ foreach ($movies as $movie) {
     '#type' => 'container',
     '#attributes' => ['class' => ['col-md-4', 'mb-4']],
     'card' => [
-      '#markup' => '
+      '#type' => 'inline_template',
+      '#template' => '
         <div class="card h-100 shadow-sm">
-          ' . $poster . '
+          {{ poster|raw }}
           <div class="card-body">
-            <h5 class="card-title">' . $title . '</h5>
-            <p class="card-text"><strong>Genre:</strong> ' . $genre . '</p>
-            <p class="card-text"><strong>Showtime:</strong> ' . $showtime . '</p>
-            <p class="card-text"><strong>Total Seats:</strong> ' . $total_seats . '</p>
-            <p class="card-text"><strong>Rating:</strong> ' . $rating . '</p>
-            <p class="text-muted small">Created: ' . date('d M Y', $movie->getCreatedTime()) . '</p>
+            <h5 class="card-title"> {{ title }} </h5>
+            <p class="card-text"><strong>Genre:</strong> {{ genre }}</p>
+            <p class="card-text"><strong>Showtime:</strong> {{ showtime }} </p>
+            <p class="card-text"><strong>Total Seats:</strong> {{ total_seats }}</p>
+            <p class="card-text"><strong>Rating:</strong> {{ rating }}</p>
+            <p class="text-muted small">Created: {{ created }}</p>
             <hr>
             <h6>Seat Map</h6>
-            ' . $this->getSeatMapMarkup($movie) . '
+            {{ seat_map_markup|raw }}
           </div>
         </div>
       ',
+      '#context' => [
+      'poster' => $poster, // already safe HTML
+      'title' => $title,
+      'genre' => $genre,
+      'showtime' => $showtime,
+      'total_seats' => $total_seats,
+      'rating' => $rating,
+      'created' => date('d M Y', $movie->getCreatedTime()),
+      'seat_map_markup' => $this->getSeatMapMarkup($movie), // render array
+    ],
     ],
   ];
 }
@@ -203,4 +214,37 @@ foreach ($movies as $movie) {
     }
     else {
       $build['movies'] = [
-        '#markup' 
+        '#markup' => '<p class="container">No movies available.</p>',
+      ];
+    }
+
+    return $build;
+  }
+
+  /**
+ * Get seat map markup for a movie node.
+ */
+private function getSeatMapMarkup(Node $movie) {
+  // Instantiate SeatController.
+  $seat_controller = new \Drupal\movie_booking\Controller\SeatController();
+
+  // Call seatMapAjax() method.
+  $response = $seat_controller->seatMapAjax($movie);
+
+  // Decode JSON to get the markup.
+  $data = json_decode($response->getContent(), TRUE);
+
+  // Return as render array so Drupal treats it as HTML.
+  return [
+    '#type' => 'inline_template',
+    '#template' => '{{ markup|raw }}',
+    '#context' => [
+      'markup' => $data['markup'] ?? '<p>No seat map available.</p>',
+    ],
+  ];
+}
+
+
+}
+
+

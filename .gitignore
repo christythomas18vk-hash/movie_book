@@ -1,0 +1,41 @@
+# Composer dependencies
+/vendor/
+/composer.lock
+
+# Drupal core and contrib
+/web/core/
+/web/modules/contrib/
+/web/profiles/contrib/
+/web/themes/contrib/
+
+# Drupal files directory
+/web/sites/*/files/
+/web/sites/*/private/
+
+# Drupal settings
+/web/sites/*/settings.php
+/web/sites/*/services.yml
+/web/sites/*/settings.local.php
+/web/sites/*/development.services.yml
+/web/sites/*/local.services.yml
+
+# IDE and OS files
+*.sublime-project
+*.sublime-workspace
+*.idea/
+*.vscode/
+*.DS_Store
+*.swp
+*.bak
+*.tmp
+Thumbs.db
+
+# PHPUnit test output
+/web/sites/simpletest/
+
+# Misc
+/web/sites/*/translations/
+/web/sites/*/files/translations/
+/web/sites/*/files/php/twig/*
+/web/sites/*/files/js/*
+/web/sites/*/files/css/*
