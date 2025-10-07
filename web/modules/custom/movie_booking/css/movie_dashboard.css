@@ -1,0 +1,13 @@
+.seat-map-container {
+    overflow-x: auto; /* horizontal scroll if too wide */
+    padding: 5px;
+}
+
+.seat-map .seat-row {
+    flex-wrap: wrap; /* wrap seats to next line if needed */
+}
+
+.seat-map button.btn {
+    min-width: 40px; /* adjust size */
+    margin: 2px; /* spacing between seats */
+}

@@ -191,7 +191,7 @@ class MovieAddForm extends FormBase {
       'type' => 'movies',
       'title' => $form_state->getValue('title'),
       'field_poster' => $poster_target,
-      'field_showtime' => $showtime_value,
+      'field_showtimes' => $showtime_value,
       'field_genre' => [['target_id' => $form_state->getValue('field_genre')]],
       'field_total_seats' => $form_state->getValue('field_total_seats'),
       'field_seat_map' => $seat_map_json,

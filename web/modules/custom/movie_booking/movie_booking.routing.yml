@@ -30,3 +30,19 @@ movie_booking.seat_map_ajax:
     _permission: 'access content'
     node: \d+
 
+movie_booking.booking_form:
+  path: '/movie/{node}/book'
+  defaults:
+    _form: '\Drupal\movie_booking\Form\BookingForm'
+    _title: 'Book Movie'
+  requirements:
+    _permission: 'access content'
+
+movie_booking.customer_bookings:
+  path: '/customer/bookings'
+  defaults:
+    _controller: '\Drupal\movie_booking\Controller\BookingController::customerBookings'
+    _title: 'My Bookings'
+  requirements:
+    _role: 'authenticated'
+
