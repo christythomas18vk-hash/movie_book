@@ -1,0 +1,7 @@
+name: 'Movie Booking'
+type: module
+description: 'Movie ticket booking system with admin and customer dashboards.'
+core_version_requirement: ^11
+package: Custom
+dependencies:
+  - drupal:node

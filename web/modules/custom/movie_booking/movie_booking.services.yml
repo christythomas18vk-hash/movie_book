@@ -1,0 +1,5 @@
+services:
+  movie_booking.login_redirect_subscriber:
+    class: Drupal\movie_booking\EventSubscriber\LoginRedirectSubscriber
+    tags:
+      - { name: event_subscriber }
