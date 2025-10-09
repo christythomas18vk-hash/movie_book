@@ -41,7 +41,7 @@ class DashboardController extends ControllerBase {
     ];
 
     // Add New Movie button
-    $url = Url::fromRoute('node.add', ['node_type' => 'movie']);
+    $url = Url::fromUri('internal:/admin/movie/add');;
     $link = Link::fromTextAndUrl('Add New Movie', $url)->toRenderable();
     $link['#attributes'] = ['class' => ['btn', 'btn-primary', 'mb-4']];
     $build['add_movie'] = [
@@ -99,55 +99,70 @@ class DashboardController extends ControllerBase {
     // Rating
     $rating = $movie->get('field_rating')->value ?? 'N/A';
 
-    // Build card markup
-    $cards[] = [
-      '#type' => 'container',
-      '#attributes' => ['class' => ['col-md-4', 'mb-4']],
-      'card' => [
-        '#type' => 'inline_template',
-        '#template' => '
-          <div class="card h-100 shadow-sm">
-            {{ poster|raw }}
-            <div class="card-body">
-              <h5 class="card-title"> {{ title }} </h5>
-              <p class="card-text"><strong>Genre:</strong> {{ genre }}</p>
-              <p class="card-text"><strong>Showtime:</strong> {{ showtime }} </p>
-              <p class="card-text"><strong>Total Seats:</strong> {{ total_seats }}</p>
-              <p class="card-text"><strong>Rating:</strong> {{ rating }}</p>
-              <p class="text-muted small">Created: {{ created }}</p>
-              <hr>
-              <h6>Seat Map</h6>
-              {{ seat_map_markup|raw }}
-            </div>
-          </div>
-        ',
-        '#context' => [
-        'poster' => $poster, // already safe HTML
-        'title' => $title,
-        'genre' => $genre,
-        'showtime' => $showtime,
-        'total_seats' => $total_seats,
-        'rating' => $rating,
-        'created' => date('d M Y', $movie->getCreatedTime()),
-        'seat_map_markup' => $this->getSeatMapMarkup($movie), // render array
-      ],
-      ],
-    ];
-  }
-  $build['movies'] = [
-    '#type' => 'container',
-    '#attributes' => ['class' => ['container', 'row', 'g-3']],
-    'cards' => $cards,
-  ];
-    }
-    else {
-      $build['movies'] = [
-        '#markup' => '<p class="container">No movies added yet.</p>',
+    $build['#attached']['html_head'][] = [
+        [
+          '#tag' => 'style',
+          '#value' => '
+            .seat-map-container { overflow-x: auto; padding: 5px; }
+            .seat-map .seat-row { flex-wrap: wrap; }
+            .seat-map button.btn { min-width: 40px; margin: 2px; }
+          ',
+        ],
+        'custom_seat_map_styles',
       ];
-    }
 
-    return $build;
-  }
+    // Build card markup
+   $cards[] = [
+        '#type' => 'container',
+      '#attributes' => ['class' => ['col-md-4', 'mb-4']],
+        'card' => [
+          '#type' => 'inline_template',
+          '#template' => '
+            <div class="card h-100 shadow-sm">
+              {{ poster|raw }}
+              <div class="card-body">
+                <h5 class="card-title"> {{ title }} </h5>
+                <p class="card-text"><strong>Genre:</strong> {{ genre }}</p>
+                <p class="card-text"><strong>Showtime:</strong> {{ showtime }} </p>
+                <p class="card-text"><strong>Total Seats:</strong> {{ total_seats }}</p>
+                <p class="card-text"><strong>Rating:</strong> {{ rating }}</p>
+                <p class="text-muted small">Created: {{ created }}</p>
+                <hr>
+                <h6>Seat Map</h6>
+                {{ seat_map_markup|raw }}
+              </div>
+            </div>
+          ',
+          '#context' => [
+          'poster' => $poster, // already safe HTML
+          'title' => $title,
+          'genre' => $genre,
+          'showtime' => $showtime,
+          'total_seats' => $total_seats,
+          'rating' => $rating,
+          'created' => date('d M Y', $movie->getCreatedTime()),
+          'seat_map_markup' => $this->getSeatMapMarkup($movie), // render array
+        ],
+        '#cache' => [
+          'max-age' => 0, // disable caching for this card
+        ]
+        ],
+        ];
+        }
+        $build['movies'] = [
+          '#type' => 'container',
+          '#attributes' => ['class' => ['container', 'row', 'g-3']],
+          'cards' => $cards,
+        ];
+      }
+      else {
+        $build['movies'] = [
+          '#markup' => '<p class="container">No movies added yet.</p>',
+        ];
+      }
+
+      return $build;
+    } 
 
   /**
    * Customer dashboard page.
