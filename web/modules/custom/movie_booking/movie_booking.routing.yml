@@ -12,7 +12,7 @@ movie_booking.customer_dashboard:
     _controller: '\Drupal\movie_booking\Controller\DashboardController::customerDashboard'
     _title: 'Customer Dashboard'
   requirements:
-   _permission: 'access content'
+    _permission: 'access content'
 
 movie_booking.add_movie:
   path: '/admin/movie/add'
@@ -21,7 +21,6 @@ movie_booking.add_movie:
     _title: 'Add New Movie'
   requirements:
     _permission: 'administer content'
-  
 
 movie_booking.seat_map_ajax:
   path: '/movie/{node}/seat-map-ajax'
@@ -47,3 +46,60 @@ movie_booking.customer_bookings:
   requirements:
     _role: 'authenticated'
 
+movie_booking.landing_page:
+  path: '/'
+  defaults:
+    _controller: '\Drupal\movie_booking\Controller\LandingPageController::landingPage'
+    _title: 'Welcome to Movie Booking System'
+  requirements:
+    _permission: 'access content'
+
+movie_booking.edit_movie:
+  path: '/admin/movie/{node}/edit'
+  defaults:
+    _controller: '\Drupal\movie_booking\Controller\MovieManageController::editMovie'
+    _title: 'Edit Movie'
+  requirements:
+    _permission: 'administer content'
+    node: \d+
+
+movie_booking.delete_movie:
+  path: '/admin/movie/{node}/delete'
+  defaults:
+    _controller: '\Drupal\movie_booking\Controller\MovieManageController::deleteMovie'
+    _title: 'Delete Movie'
+  requirements:
+    _permission: 'administer content'
+    node: \d+
+
+movie_booking.payment_page:
+  path: '/payment/{booking_id}'
+  defaults:
+    _controller: '\Drupal\movie_booking\Controller\PaymentController::paymentPage'
+    _title: 'Complete Your Payment'
+  requirements:
+    _permission: 'access content'
+  options:
+    parameters:
+      booking_id:
+        type: integer
+
+# movie_booking.payment_success:
+#   path: '/payment/success'
+#   defaults:
+#     _controller: '\Drupal\movie_booking\Controller\PaymentController::paymentSuccess'
+#     _title: 'Payment Successful'
+#   requirements:
+#     _permission: 'access content'
+
+movie_booking.payment_confirm:
+  path: '/payment/confirm/{booking_id}'
+  defaults:
+    _controller: '\Drupal\movie_booking\Controller\PaymentController::paymentConfirm'
+    _title: 'Confirm Payment'
+  requirements:
+    _permission: 'access content'
+  options:
+    parameters:
+      booking_id:
+        type: integer
