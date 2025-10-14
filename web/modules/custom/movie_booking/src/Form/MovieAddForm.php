@@ -80,6 +80,17 @@ class MovieAddForm extends FormBase {
       ],
     ];
 
+    // Ticket Price
+    $form['field_ticket_price'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Ticket Price (₹)'),
+      '#description' => $this->t('Enter the price per ticket for this movie.'),
+      '#min' => 0,
+      '#step' => 1,
+      '#required' => TRUE,
+      '#attributes' => ['class' => ['form-control']],
+    ];
+
     // Seat map (auto-generated JSON)
     $form['field_seats_map'] = [
       '#type' => 'textarea',
@@ -135,28 +146,26 @@ class MovieAddForm extends FormBase {
     $row_index = 0;
 
     while ($seat_number <= $total) {
-        $row_letter = $alphabet[$row_index];
-        $row = [];
+      $row_letter = $alphabet[$row_index];
+      $row = [];
 
-        for ($j = 1; $j <= $seats_per_row; $j++) {
-            if ($seat_number > $total) {
-                break;
-            }
-            $row[] = [
-                'label' => $row_letter . $j,
-                'status' => 'available', // default status
-            ];
-            $seat_number++;
+      for ($j = 1; $j <= $seats_per_row; $j++) {
+        if ($seat_number > $total) {
+          break;
         }
+        $row[] = [
+          'label' => $row_letter . $j,
+          'status' => 'available', // default status
+        ];
+        $seat_number++;
+      }
 
-        $seat_map[$row_letter] = $row;
-        $row_index++;
+      $seat_map[$row_letter] = $row;
+      $row_index++;
     }
 
     return json_encode($seat_map, JSON_PRETTY_PRINT);
-}
-
-
+  }
 
   /**
    * {@inheritdoc}
@@ -196,13 +205,15 @@ class MovieAddForm extends FormBase {
       'field_total_seats' => $form_state->getValue('field_total_seats'),
       'field_seat_map' => $seat_map_json,
       'field_rating' => $form_state->getValue('field_rating'),
+      'field_ticket_price' => $form_state->getValue('field_ticket_price'),
       'status' => 1,
     ]);
 
     $node->save();
 
-    $this->messenger()->addStatus($this->t('Movie "@title" has been added successfully with seat map!', [
+    $this->messenger()->addStatus($this->t('🎬 Movie "@title" has been added successfully with ticket price ₹@price.', [
       '@title' => $node->getTitle(),
+      '@price' => $form_state->getValue('field_ticket_price'),
     ]));
 
     // Redirect to Admin Dashboard

@@ -54,6 +54,7 @@ movie_booking.landing_page:
   requirements:
     _permission: 'access content'
 
+
 movie_booking.edit_movie:
   path: '/admin/movie/{node}/edit'
   defaults:
@@ -84,13 +85,7 @@ movie_booking.payment_page:
       booking_id:
         type: integer
 
-# movie_booking.payment_success:
-#   path: '/payment/success'
-#   defaults:
-#     _controller: '\Drupal\movie_booking\Controller\PaymentController::paymentSuccess'
-#     _title: 'Payment Successful'
-#   requirements:
-#     _permission: 'access content'
+
 
 movie_booking.payment_confirm:
   path: '/payment/confirm/{booking_id}'
